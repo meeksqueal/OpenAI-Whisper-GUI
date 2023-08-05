@@ -1,11 +1,12 @@
 # OpenAI Whisper GUI
-Modern GUI application that transcribes and translate audio files using OpenAI Whisper.
+A modern GUI application that transcribes and translates audio and video files, offering the option to save the subtitles as separate files, embed the subtitles in a .mkv format, or hardcode them into the video using OpenAI Whisper and ffmpeg.
+
+Tested on Windows with an Nvidia GPU.
 
 
 ## Preview
-![preview](https://github.com/iamironman0/OpenAI-Whisper-GUI/assets/63475761/bb5fcac3-6d87-4617-9f3c-dcdbf0963574)
+![WhiserGUI](https://github.com/meeksqueal/OpenAI-Whisper-GUI/assets/141447225/a0d5b3b6-236a-49d6-98aa-0b99eaa0600f)
 
-https://github.com/iamironman0/OpenAI-Whisper-GUI/assets/63475761/a6a65286-4450-4493-aef1-a2c3f658c96d
 
 ## Setup
 
