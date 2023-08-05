@@ -440,52 +440,59 @@ class RightFrame(ctk.CTkFrame):
 
 
     def save_text(self):
-        #get original filename
-        ogfile_name = os.path.basename(self.file_path)
-        sep = "."
-        ogfile_name = ogfile_name.split(sep,1)[0]
-        #ask for save as filename
-        file_path = fd.asksaveasfilename(
-            parent=self,
-            initialfile= ogfile_name,
-            defaultextension=".srt",
-            title="Export subtitle",
-            filetypes=[("SubRip Subtitle file", "*.srt"), ("text file", "*.txt"),("Web Video Text Tracks", "*.vtt"),
-                       ("Tab-separated values", "*.tsv"),("JSON", "*.json"), ("Save all extensions", "*.all")],)
-        #get file name and file path
-        file_name = os.path.basename(file_path)
-        file_extension = os.path.splitext(file_path)
-        dir_name = os.path.dirname(file_path)
-        #output subtitle
-        if file_path and (file_extension[1]==".srt"):
-            #save as SRT file
-            writer = get_writer("srt", dir_name)
-            writer(self.result, file_name)
-            self.save_notification()
-        elif file_path and (file_extension[1]==".txt"):
-            #save as TXT file
-            txt_writer = get_writer("txt", dir_name)
-            txt_writer(self.result, file_name)
-            self.save_notification()
-        elif file_path and (file_extension[1]==".vtt"):
-            # Save as an VTT file
-            vtt_writer = get_writer("vtt", dir_name)
-            vtt_writer(self.result, file_name)
-            self.save_notification()
-        elif file_path and (file_extension[1]==".tsv"):
-            # Save as a TSV file
-            tsv_writer = get_writer("tsv", dir_name)
-            tsv_writer(self.result, file_name)
-            self.save_notification()
-        elif file_path and (file_extension[1]==".json"):
-            # Save as a JSON file
-            json_writer = get_writer("json", dir_name)
-            json_writer(self.result, file_name)
-            self.save_notification()
-        elif file_path and (file_extension[1]==".all"):
-            all_writer = get_writer("all", dir_name)
-            all_writer(self.result, file_name)
-            self.save_notification()
+        if self.result is not None:
+            #get original filename
+            ogfile_name = os.path.basename(self.file_path)
+            sep = "."
+            ogfile_name = ogfile_name.split(sep,1)[0]
+            #ask for save as filename
+            file_path = fd.asksaveasfilename(
+                parent=self,
+                initialfile= ogfile_name,
+                defaultextension=".srt",
+                title="Export subtitle",
+                filetypes=[("SubRip Subtitle file", "*.srt"), ("text file", "*.txt"),("Web Video Text Tracks", "*.vtt"),
+                        ("Tab-separated values", "*.tsv"),("JSON", "*.json"), ("Save all extensions", "*.all")],)
+            #get file name and file path
+            file_name = os.path.basename(file_path)
+            file_extension = os.path.splitext(file_path)
+            dir_name = os.path.dirname(file_path)
+            #output subtitle
+            if file_path and (file_extension[1]==".srt"):
+                #save as SRT file
+                writer = get_writer("srt", dir_name)
+                writer(self.result, file_name)
+                self.save_notification()
+            elif file_path and (file_extension[1]==".txt"):
+                #save as TXT file
+                txt_writer = get_writer("txt", dir_name)
+                txt_writer(self.result, file_name)
+                self.save_notification()
+            elif file_path and (file_extension[1]==".vtt"):
+                # Save as an VTT file
+                vtt_writer = get_writer("vtt", dir_name)
+                vtt_writer(self.result, file_name)
+                self.save_notification()
+            elif file_path and (file_extension[1]==".tsv"):
+                # Save as a TSV file
+                tsv_writer = get_writer("tsv", dir_name)
+                tsv_writer(self.result, file_name)
+                self.save_notification()
+            elif file_path and (file_extension[1]==".json"):
+                # Save as a JSON file
+                json_writer = get_writer("json", dir_name)
+                json_writer(self.result, file_name)
+                self.save_notification()
+            elif file_path and (file_extension[1]==".all"):
+                all_writer = get_writer("all", dir_name)
+                all_writer(self.result, file_name)
+                self.save_notification()
+        else:
+            notification = Notification(
+                master=self.master, text="Warning: No file is transcribed."
+            )
+            notification.show_message()
+            self.after(50000, notification.hide_message)
 
     def clear_output(self):
         self.textbox.configure(state="normal")
