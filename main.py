@@ -214,6 +214,14 @@ class LeftFrame(ctk.CTkFrame):
         self.task_option.set("Translate")
         self.task_option.grid(row=3, column=1, padx=10, pady=10)
 
+        device_label = ctk.CTkLabel(self,text="Device")
+        device_label.grid(row=4,column=0, padx=10, pady=10)
+
+        device_value = ["CPU", "GPU"]
+        self.device_option = ctk.CTkOptionMenu(self,values=device_value, corner_radius=5)
+        self.device_option.set("GPU")
+        self.device_option.grid(row=4,column=1, padx=10, pady=10)
+
         self.upload_button = ctk.CTkButton(
             self,
             text="Upload Audio/Video",
@@ -257,6 +265,11 @@ class LeftFrame(ctk.CTkFrame):
             model = self.model_option.get().lower()
             language = self.language_option.get().lower()
             task = self.task_option.get().lower()
+            device = self.device_option.get().lower()
+
+            if device == "gpu":
+                device = "cuda"
+                self.device = "cuda"
 
             if language == "english" and model != "large":
                 model += ".en"
@@ -264,7 +277,7 @@ class LeftFrame(ctk.CTkFrame):
             if language == "english":
                 task = "transcribe"
 
-            return self.file_path, model, language, task
+            return self.file_path, model, language, task, device
         notification = Notification(
             master=self.master,
             text="Please upload an audio file to begin the task!",
@@ -347,7 +360,10 @@ class RightFrame(ctk.CTkFrame):
             if file_extension[1] == ".mkv":
                 os.system("ffmpeg -i {} -i {} -map 0 -map 1 -c copy -disposition:s:0 default -metadata:s:s:0 language={} {} -y".format('"'+self.file_path+'"',tempfile_name,self.lang, os.path.join('"'+dir_name,file_name+'"')))
             else:
-                os.system("ffmpeg -i {} -c:v h264_nvenc -vf subtitles={} {} -y".format('"'+self.file_path+'"',tempfile_name, os.path.join('"'+dir_name,file_name+'"')))
+                if self.device == "cuda":
+                    os.system("ffmpeg -i {} -c:v h264_nvenc -vf subtitles={} {} -y".format('"'+self.file_path+'"',tempfile_name, os.path.join('"'+dir_name,file_name+'"')))
+                else:
+                    os.system("ffmpeg -i {} -vf subtitles={} {} -y".format('"'+self.file_path+'"',tempfile_name, os.path.join('"'+dir_name,file_name+'"')))
             
             os.remove(os.path.join(".", tempfile_name))
         else:
@@ -360,13 +376,13 @@ class RightFrame(ctk.CTkFrame):
     def start_task(self):
         self.clear_output()
         if self.left_frame_ref.return_data():
-            file_path, model, language, task = self.left_frame_ref.return_data()
+            file_path, model, language, task, device = self.left_frame_ref.return_data()
 
             self.thread_pool.submit(
-                self.run_transcribe, file_path, model, language, task
+                self.run_transcribe, file_path, model, language, task, device
             )
 
-    def run_transcribe(self, file_path, model, language, task):
+    def run_transcribe(self, file_path, model, language, task, device):
         notification = Notification(
             master=self.master, text="Task has started. Please wait!"
         )
@@ -375,8 +391,9 @@ class RightFrame(ctk.CTkFrame):
 
         self.start_button.configure(state="disabled")
         self.file_path = file_path
-
-        load_model = whisper.load_model(model)
+        self.device = device
+        
+        load_model = whisper.load_model(model,device=device)
 
         if language == "auto detection":
             # load audio and pad/trim it to fit 30 seconds
