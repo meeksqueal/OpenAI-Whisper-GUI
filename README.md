@@ -22,7 +22,7 @@ Tested on Windows with an Nvidia GPU.
 1. Install the required dependencies by running the following command:
 
 ```
-pip install customtkinter Pillow torch openai-whisper torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
+pip install customtkinter Pillow torch -f https://download.pytorch.org/whl/torch_stable.html openai-whisper
 ```
 
 2. Install fffmpeg:
