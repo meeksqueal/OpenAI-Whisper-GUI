@@ -5,7 +5,8 @@ Tested on Windows with an Nvidia GPU.
 
 
 ## Preview
-![WhiserGUI](https://github.com/meeksqueal/OpenAI-Whisper-GUI/assets/141447225/a0d5b3b6-236a-49d6-98aa-0b99eaa0600f)
+![WhiserGUI](https://github.com/meeksqueal/OpenAI-Whisper-GUI/assets/141447225/ce1dfbe4-394d-4763-975b-63a67593011a)
+
 
 
 ## Setup
